@@ -1,0 +1,203 @@
+"""
+1. Создать класс TrafficLight (светофор) и определить у него один атрибут color (цвет) и метод running (запуск).
+Атрибут реализовать как приватный. В рамках метода реализовать переключение светофора в режимы: красный, желтый, зеленый.
+Продолжительность первого состояния (красный) составляет 7 секунд, второго (желтый) — 2 секунды, третьего (зеленый) — на ваше усмотрение.
+Переключение между режимами должно осуществляться только в указанном порядке (красный, желтый, зеленый).
+Проверить работу примера, создав экземпляр и вызвав описанный метод.
+"""
+
+from time import sleep
+
+class TrafficLight:
+    __color = ['Красный', 'Желтый', 'Зеленый']
+    def running(self):
+        print(f"{self.__color[0]}")
+        sleep(7)
+        print(f"{self.__color[1]}")
+        sleep(2)
+        print(f"{self.__color[2]}")
+        sleep(5)
+
+a = TrafficLight()
+a.running()
+
+
+"""
+2. Реализовать класс Road (дорога), в котором определить атрибуты: length (длина), width (ширина).
+Значения данных атрибутов должны передаваться при создании экземпляра класса. Атрибуты сделать защищенными.
+Определить метод расчета массы асфальта, необходимого для покрытия всего дорожного полотна.
+Использовать формулу: длина*ширина*масса асфальта для покрытия одного кв метра дороги асфальтом, толщиной в 1 см*число см толщины полотна.
+Проверить работу метода.
+Например: 20м*5000м*25кг*5см = 12500 т
+"""
+
+class Road:
+    __length = None
+    __width = None
+    weigth = None
+    tickness = None
+    def __init__(self, length, width):
+        self.length = length
+        self.width = width
+        print('Creat road_to_village object')
+
+    def intake(self):
+        self.weigth = 25
+        self.tickness = 0.05
+        intake = self.length * self.width * self.weigth * self.tickness / 1000
+        print(f'Для строительства необходимо {intake} тонн')
+
+road_to_village = Road(20, 5000)
+road_to_village.intake()
+
+
+"""
+3. Реализовать базовый класс Worker (работник), в котором определить атрибуты: name, surname, position (должность), income (доход).
+Последний атрибут должен быть защищенным и ссылаться на словарь, содержащий элементы: оклад и премия, например, {"wage": wage, "bonus": bonus}.
+Создать класс Position (должность) на базе класса Worker.
+В классе Position реализовать методы получения полного имени сотрудника (get_full_name) и дохода с учетом премии (get_total_income).
+Проверить работу примера на реальных данных (создать экземпляры класса Position, передать данные, проверить значения атрибутов, вызвать методы экземпляров).
+"""
+
+class Worker:
+    def __init__(self, name, surname, position, wage, bonus):
+        self.name = name
+        self.surname = surname
+        self.position = position
+        self._income = {"wage": wage, "bonus": bonus}
+    
+class Position(Worker):
+    def __init__(self, name, surname, position, wage, bonus):
+        super().__init__(name, surname, position, wage, bonus)
+    
+    def get_full_name(self):
+        return self.name + ' ' + self.surname
+    
+    def get_total_income(self):
+        return int(self._income['wage']) + int(self._income['bonus'])
+
+name, surname = input(\
+    "Введите имя и фамилию: ").split()
+position = input(\
+    "Ваша должность: ").split()
+wage, bonus = input(\
+    "Ваш оклад и премия через проблел: ").split()
+
+a = Position(name, surname, position, wage, bonus)
+print(a.get_full_name())
+print(a.get_total_income())
+
+
+"""
+4.Реализуйте базовый класс Car. У данного класса должны быть следующие атрибуты: speed, color, name, is_police (булево).
+А также методы: go, stop, turn(direction), которые должны сообщать, что машина поехала, остановилась, повернула (куда).
+Опишите несколько дочерних классов: TownCar, SportCar, WorkCar, PoliceCar.
+Добавьте в базовый класс метод show_speed, который должен показывать текущую скорость автомобиля.
+Для классов TownCar и WorkCar переопределите метод show_speed.
+При значении скорости свыше 60 (TownCar) и 40 (WorkCar) должно выводиться сообщение о превышении скорости.
+"""
+
+class Car:
+    speed: int
+    color: str
+    name: str
+    is_police: bool = False
+
+    def __init__(self, name):
+        self.name = name
+
+    def go(self, speed):
+        self.speed = speed
+        print(f'{self.name} поехал')
+
+    def stop(self):
+        print(f'{self.name} остановился')
+
+    def turn(self, direction):
+        turn = {'left': 'лево', 'right': 'право'}
+        print(f'{self.name} повернул на{turn[direction]}')
+
+    def show_speed(self):
+        print(f'У {self.name} скорость: {self.speed}')
+
+
+class SpeedLimit(Car):
+    speed_limit: int
+
+    def show_speed(self):
+        print(f'У {self.name} скорость: {self.speed}')
+        if self.speed > self.speed_limit:
+            print('Скорость превышена')
+
+
+class TownCar(SpeedLimit):
+    speed_limit = 60
+
+
+class WorkCar(SpeedLimit):
+    speed_limit = 40
+
+
+class PoliceCar(Car):
+    is_police = True
+
+
+class SportCar(Car):
+    pass
+
+
+if __name__ == '__main__':
+    town = TownCar('Bentley')
+    town.go(70)
+    town.show_speed()
+    town.speed = 40
+    town.turn('left')
+    town.stop()
+    print()
+    police = PoliceCar('Tesla')
+    police.go(70)
+    police.show_speed()
+    police.speed = 30
+    police.turn('right')
+    police.stop()
+    print()
+    sport = SportCar('Porsche')
+    sport.go(90)
+    work = WorkCar('Mater')
+    work.go(20)
+    
+    
+"""
+5. Создайте экземпляры классов, передайте значения атрибутов.
+Выполните доступ к атрибутам, выведите результат. Выполните вызов методов и также покажите результат.
+"""
+
+"""
+6. Реализовать класс Stationery (канцелярская принадлежность).
+Определить в нем атрибут title (название) и метод draw (отрисовка). Метод выводит сообщение “Запуск отрисовки.”
+Создать три дочерних класса Pen (ручка), Pencil (карандаш), Handle (маркер).
+В каждом из классов реализовать переопределение метода draw.
+Для каждого из классов метод должен выводить уникальное сообщение.
+Создать экземпляры классов и проверить, что выведет описанный метод для каждого экземпляра.
+"""
+
+class Stationery:
+    atr_title = 'Title'
+    def draw(self):
+        print('Запуск отрисовки.')
+class Pen(Stationery):
+    def draw(self):
+        print('Отрисовка ручкой')
+class Pencil(Stationery):
+    def draw(self):
+        print('Отрисовка карандашом')
+class Handle(Stationery):
+    def draw(self):
+        print('Отрисовка маркером')
+
+my_pen = Pen()
+my_pencil = Pencil()
+my_handle = Handle()
+my_pen.draw()
+my_pencil.draw()
+my_handle.draw()
